@@ -2,12 +2,13 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from fastapi import HTTPException
+import os
 
 # Configure your Cloudinary credentials
 cloudinary.config(
-    cloud_name="dejeplzpv",
-    api_key="124721334338285",
-    api_secret="CTYwG9PTDXhWGS-1L2XWhzeqjNU"
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET")
 )
 
 
