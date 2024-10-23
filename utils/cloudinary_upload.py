@@ -12,6 +12,7 @@ cloudinary.config(
 )
 
 
+
 def UploadToCloudinary(images):
     image_urls = []
 
