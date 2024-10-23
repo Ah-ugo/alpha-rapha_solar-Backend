@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, BeforeValidator
+from pydantic import BaseModel, Field, BeforeValidator, conint
 from typing import List, Optional, Annotated
 from bson import ObjectId
 
@@ -54,9 +54,14 @@ class TokenData(BaseModel):
 
 
 # Review Models
+# class ReviewCreate(BaseModel):
+#     rating: Optional[int] = None
+#     comment: Optional[str] = None
+
 class ReviewCreate(BaseModel):
-    rating: Optional[int] = None
+    rating: conint(ge=1, le=5)  # Rating must be between 1 and 5
     comment: Optional[str] = None
+
 
 
 class Review(ReviewCreate):
