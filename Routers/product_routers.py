@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Form, UploadFile, File, HTTPException
 from typing import List
-from Services.product_services import getAllProducts, create_product, DeleteProduct
-from models import Product
+from Services.product_services import getAllProducts, create_product, DeleteProduct, EditProduct, GetProductByID, \
+    GetProductsByTitle
+from models import ProductBase
 
 router = APIRouter()
 
@@ -25,6 +26,21 @@ def add_product(title: str = Form(...),
                               image_urls)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to add product: {str(e)}")
+
+
+@router.get("/{id}")
+def get_product_by_id(id: str):
+    return GetProductByID(id)
+
+
+@router.get("/title/{title}")
+def get_product_by_title(title: str):
+    return GetProductsByTitle(title)
+
+
+@router.patch("/{id}")
+def edit_product(id: str, body: ProductBase):
+    return EditProduct(id=id, body=body)
 
 
 @router.delete("/{id}")

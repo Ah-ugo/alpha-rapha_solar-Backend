@@ -28,6 +28,6 @@ def UploadToCloudinary(images):
 
 
 def UploadPdfToCloud(pdf):
-    upload_result = cloudinary.uploader.upload(pdf.file, folder="shops")
+    upload_result = cloudinary.uploader.upload(pdf.file, folder="shops", resource_type="raw")
     image_url = upload_result.get("url")
     return image_url

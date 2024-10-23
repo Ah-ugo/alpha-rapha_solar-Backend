@@ -1,6 +1,6 @@
 from DB.db import product_db
 from models import Product, ProductCreate
-from fastapi import Form, UploadFile, File
+from fastapi import Form, UploadFile, File, HTTPException
 from typing import List
 from utils.cloudinary_upload import UploadToCloudinary, UploadPdfToCloud
 from models import ObjectId
@@ -40,6 +40,42 @@ def create_product(title,
     # Fetch the created product with its ID
     created_product = product_db.find_one({"_id": result.inserted_id})
     return Product(**created_product)  # Convert the fetched document to Product model
+
+def GetProductByID(id):
+    get_product = product_db.find_one({"_id": ObjectId(id)})
+
+    if get_product:
+        get_product["_id"] = str(get_product["_id"])
+        return get_product
+    else:
+        raise HTTPException(status_code=404, detail=f"Product with id {id} not found")
+
+
+def GetProductsByTitle(title: str):
+    # Use a case-insensitive regular expression to match titles containing the search string
+    get_products = product_db.find({"title": {"$regex": title, "$options": "i"}})
+
+    proArr = []
+
+    for prods in get_products:
+        prods["_id"] = str(prods["_id"])  # Convert ObjectId to string
+        proArr.append(Product(**prods))
+
+    if not proArr:
+        raise HTTPException(status_code=404, detail=f"No products found containing '{title}'")
+
+    return proArr
+
+def EditProduct(id, body):
+    update_data = {k: v for k, v in body.dict().items() if v is not None}
+    get_product = product_db.find_one({"_id": ObjectId(id)})
+    if get_product:
+        product_db.update_one({"_id": ObjectId(id)}, {"$set": update_data})
+        get_product = product_db.find_one({"_id": ObjectId(id)})
+        get_product["_id"] = str(get_product["_id"])
+        return get_product
+    else:
+        raise HTTPException(status_code=404, detail=f"shop with id {id} not found")
 
 
 def DeleteProduct(id):
