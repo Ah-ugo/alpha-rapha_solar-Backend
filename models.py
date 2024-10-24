@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, BeforeValidator, conint
 from typing import List, Optional, Annotated
 from bson import ObjectId
+from datetime import datetime
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
@@ -64,26 +65,67 @@ class ReviewCreate(BaseModel):
     comment: Optional[str] = None
 
 
-
 class Review(ReviewCreate):
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
     user: Optional[str] = None
     product_id: Optional[str] = None
     created_at: Optional[str] = None
 
+    class Config:
+        populate_by_name = True
+        json_encoders = {ObjectId: str}
+
+# class Review(ReviewCreate):
+#     user: Optional[str] = None
+#     product_id: Optional[str] = None
+#     created_at: Optional[str] = None
+
 
 # Order Models
+# class OrderItem(BaseModel):
+#     product_id: Optional[str] = None
+#     quantity: Optional[int] = None
+#
+#
+# class OrderCreate(BaseModel):
+#     items: Optional[List[OrderItem]] = []
+#     user_id: Optional[str] = None
+#     total_price: Optional[float] = None
+#
+#
+# class Order(OrderCreate):
+#     id: Optional[str] = None
+#     status: str = "Pending"
+#     created_at: Optional[str] = None
+
 class OrderItem(BaseModel):
-    product_id: Optional[str] = None
-    quantity: Optional[int] = None
+    product_id: str
+    quantity: int
+    title: Optional[str] = None
+    price: Optional[float] = None
+    subtotal: Optional[float] = None
 
-
-class OrderCreate(BaseModel):
-    items: Optional[List[OrderItem]] = []
-    user_id: Optional[str] = None
+class OrderBase(BaseModel):
+    items: List[OrderItem]
     total_price: Optional[float] = None
-
-
-class Order(OrderCreate):
-    id: Optional[str] = None
     status: str = "Pending"
     created_at: Optional[str] = None
+
+    class Config:
+        json_encoders = {
+            ObjectId: str
+        }
+
+class OrderCreate(OrderBase):
+    pass
+
+class Order(OrderBase):
+    id: Optional[str] = Field(alias="_id", default=None)
+    user_id: str
+
+    class Config:
+        populate_by_name = True
+        json_encoders = {
+            ObjectId: str,
+            datetime: lambda v: v.isoformat()
+        }
