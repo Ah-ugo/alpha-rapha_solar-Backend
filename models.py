@@ -39,6 +39,7 @@ class ProductUpdate(ProductBase):
 class User(BaseModel):
     username: Optional[str] = None
     full_name: Optional[str] = None
+    email: Optional[str] = None
     password: Optional[str] = None
     role: str = "customer"
 

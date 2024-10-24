@@ -75,7 +75,7 @@ def EditProduct(id, body):
         get_product["_id"] = str(get_product["_id"])
         return get_product
     else:
-        raise HTTPException(status_code=404, detail=f"shop with id {id} not found")
+        raise HTTPException(status_code=404, detail=f"Product with id {id} not found")
 
 
 def DeleteProduct(id):
