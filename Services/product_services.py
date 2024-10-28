@@ -19,6 +19,7 @@ def getAllProducts():
 
 def create_product(title,
                    description,
+                   tags,
                    price,
                    stock,
                    category,
@@ -28,6 +29,7 @@ def create_product(title,
     product_dict = {
         "title": title,
         "description": description,
+        "tags": tags,
         "price": price,
         "stock": stock,
         "category": category,

@@ -5,12 +5,14 @@ from DB.db import db
 from models import ReviewCreate, Review
 from typing import List
 from DB.db import product_db
+# from Services.auth_services import user_db
 
 review_db = db.reviews
 # product_db = db.products
 
 
 def create_review(product_id: str, review_data: ReviewCreate, username: str):
+    # username = user_db.find_one({"username": username})
     # Check if product exists
     product = product_db.find_one({"_id": ObjectId(product_id)})
     if not product:

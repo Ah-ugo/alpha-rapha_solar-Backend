@@ -16,6 +16,7 @@ def get_product():
 @router.post("/")
 def add_product(title: str = Form(...),
                 description: str = Form(...),
+                tags: List[str] = Form(...),
                 price: float = Form(...),
                 stock: int = Form(...),
                 category: str = Form(...),
@@ -23,7 +24,7 @@ def add_product(title: str = Form(...),
                 pdf_specifications: UploadFile = File(None),
                 image_urls: List[UploadFile] = File(None), current_user: dict = Depends(verify_admin)):
     try:
-        return create_product(title, description, price, stock, category, text_specifications, pdf_specifications,
+        return create_product(title, description, tags, price, stock, category, text_specifications, pdf_specifications,
                               image_urls)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to add product: {str(e)}")

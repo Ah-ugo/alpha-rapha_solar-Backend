@@ -9,6 +9,7 @@ PyObjectId = Annotated[str, BeforeValidator(str)]
 class ProductBase(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
+    tags: Optional[List[Optional[str]]] = None
     price: Optional[float] = None
     stock: Optional[int] = None
     category: Optional[str] = None
