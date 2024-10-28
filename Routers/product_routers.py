@@ -2,7 +2,7 @@ from fastapi import APIRouter, Form, UploadFile, File, HTTPException, Depends
 from typing import List
 from Services.product_services import getAllProducts, create_product, DeleteProduct, EditProduct, GetProductByID, \
     GetProductsByTitle
-from models import ProductBase
+from models import ProductBase, Specification
 from Services.auth_services import get_current_user, verify_admin
 
 router = APIRouter()
@@ -20,7 +20,7 @@ def add_product(title: str = Form(...),
                 price: float = Form(...),
                 stock: int = Form(...),
                 category: str = Form(...),
-                text_specifications: str = Form(...),
+                text_specifications: List[Specification] = Form(...),
                 pdf_specifications: UploadFile = File(None),
                 image_urls: List[UploadFile] = File(None), current_user: dict = Depends(verify_admin)):
     try:

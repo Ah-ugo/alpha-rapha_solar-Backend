@@ -6,6 +6,10 @@ from datetime import datetime
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
 # Product Models
+
+class Specification(BaseModel):
+    label: Optional[str]
+    value: Optional[str]
 class ProductBase(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
@@ -13,7 +17,7 @@ class ProductBase(BaseModel):
     price: Optional[float] = None
     stock: Optional[int] = None
     category: Optional[str] = None
-    text_specifications: Optional[str] = None
+    text_specifications: Optional[List[Specification]] = None
     pdf_specifications: Optional[str] = None
 
     class Config:
