@@ -125,7 +125,7 @@ class OrderCreate(OrderBase):
     pass
 
 class Order(OrderBase):
-    id: Optional[str] = Field(alias="_id", default=None)
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
     user_id: str
 
     class Config:

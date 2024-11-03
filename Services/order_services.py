@@ -96,6 +96,16 @@ def create_order(order_data: OrderCreate, username: dict):
     return order
 
 
+def get_all_orders():
+    order_query = order_db.find({})
+    order_arr = []
+
+    for order in order_query:
+        order_arr.append(Order(**order))
+
+    return order_arr
+
+
 def get_user_orders(username: str) -> List[Order]:
     # Find the user by username
     user = user_db.find_one({"username": username})
