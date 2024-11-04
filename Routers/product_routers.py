@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Form, UploadFile, File, HTTPException, Depends
-from typing import List
+from typing import List, Optional
 from Services.product_services import getAllProducts, create_product, DeleteProduct, EditProduct, GetProductByID, \
     GetProductsByTitle
 from models import ProductBase, Specification
@@ -17,19 +17,22 @@ def get_product():
 @router.post("/")
 def add_product(
     title: str = Form(...),
-    description: str = Form(...),
-    tags: List[str] = Form(...),  # Use "Add item" in Swagger for multiple tags
+    description: Optional[str] = Form(None),
+    tags: List[str] = Form(...),
     price: float = Form(...),
     stock: int = Form(...),
     category: str = Form(...),
-    text_specifications: str = Form(...),  # Accept JSON string
+    text_specifications: Optional[str] = Form(None),  # Accept JSON string, optional
     pdf_specifications: UploadFile = File(None),
-    image_urls: List[UploadFile] = File(None),  # Use "Add item" in Swagger for multiple images
+    image_urls: List[UploadFile] = File(None),
     current_user: dict = Depends(verify_admin)
 ):
     try:
-        # Convert the JSON string for text_specifications into a list of Specification objects
-        specifications_list = [Specification(**item) for item in json.loads(text_specifications)]
+        # If text_specifications is provided, parse it; otherwise, pass an empty list
+        specifications_list = (
+            [Specification(**item) for item in json.loads(text_specifications)]
+            if text_specifications else []
+        )
 
         # Call the create_product function with parsed data
         return create_product(

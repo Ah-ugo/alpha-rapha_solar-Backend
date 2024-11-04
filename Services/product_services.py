@@ -1,7 +1,7 @@
 from DB.db import product_db
 from models import Product, ProductCreate
 from fastapi import Form, UploadFile, File, HTTPException
-from typing import List
+from typing import List, Optional
 from utils.cloudinary_upload import UploadToCloudinary, UploadPdfToCloud
 from models import ObjectId, Specification
 from DB.db import subscribers_collection
@@ -20,27 +20,28 @@ def getAllProducts():
 
 
 def create_product(
-    title: str,
-    description: str,
-    tags: List[str],
-    price: float,
-    stock: int,
-    category: str,
-    text_specifications: List[Specification],
-    pdf_specifications: UploadFile,
-    image_urls: List[UploadFile]
+        title: str,
+        description: Optional[str],
+        tags: List[str],
+        price: float,
+        stock: int,
+        category: str,
+        text_specifications: List[Specification],
+        pdf_specifications: UploadFile,
+        image_urls: List[UploadFile]
 ):
     product_dict = {
         "title": title,
-        "description": description,
+        "description": description or "",
         "tags": tags,
         "price": price,
         "stock": stock,
         "category": category,
-        "text_specifications": [spec.dict() for spec in text_specifications],
-        "pdf_specifications": UploadPdfToCloud(pdf_specifications),
+        "text_specifications": [spec.dict() for spec in text_specifications] if text_specifications else [],
+        "pdf_specifications": UploadPdfToCloud(pdf_specifications) if pdf_specifications else None,
         "image_urls": UploadToCloudinary(image_urls)
     }
+
     result = product_db.insert_one(product_dict)
 
     subscribers = subscribers_collection.find()
@@ -50,7 +51,6 @@ def create_product(
         f"{product_dict['description']}\nPrice: N{product_dict['price']} https://alpharaphasolar.com/store"
     )
 
-    # Make sure `subject` and `content` are strings before sending
     if isinstance(subject, str) and isinstance(content, str):
         for subscriber in subscribers:
             if "email" in subscriber:
