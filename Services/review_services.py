@@ -61,7 +61,6 @@ def create_review(product_id: str, review_data: ReviewCreate, username: str):
 
     new_average = total_ratings / num_reviews if num_reviews > 0 else 0
 
-    # Update product with new rating and add review to reviews array
     product_db.update_one(
         {"_id": ObjectId(product_id)},
         {
@@ -184,7 +183,6 @@ def delete_review(review_id: str, username: str):
 
         new_average = total_ratings / num_reviews if num_reviews > 0 else 0
 
-        # Update product rating and remove review from reviews array
         product_db.update_one(
             {"_id": ObjectId(product_id)},
             {

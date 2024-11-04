@@ -8,3 +8,4 @@ url = os.getenv("MONGO_URL")
 client = MongoClient(url)
 db = client.ecommerce_db
 product_db = db.products
+subscribers_collection = db.subscribers

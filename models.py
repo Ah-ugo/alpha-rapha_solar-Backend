@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, BeforeValidator, conint
+from pydantic import BaseModel, Field, BeforeValidator, conint, EmailStr
 from typing import List, Optional, Annotated
 from bson import ObjectId
 from datetime import datetime
@@ -134,3 +134,7 @@ class Order(OrderBase):
             ObjectId: str,
             datetime: lambda v: v.isoformat()
         }
+
+
+class Subscriber(BaseModel):
+    email: EmailStr

@@ -3,7 +3,9 @@ from models import Product, ProductCreate
 from fastapi import Form, UploadFile, File, HTTPException
 from typing import List
 from utils.cloudinary_upload import UploadToCloudinary, UploadPdfToCloud
-from models import ObjectId
+from models import ObjectId, Specification
+from DB.db import subscribers_collection
+from utils.email_reminder import send_email_reminder
 
 
 def getAllProducts():
@@ -17,15 +19,17 @@ def getAllProducts():
     return prodArray
 
 
-def create_product(title,
-                   description,
-                   tags,
-                   price,
-                   stock,
-                   category,
-                   text_specifications,
-                   pdf_specifications,
-                   image_urls):
+def create_product(
+    title: str,
+    description: str,
+    tags: List[str],
+    price: float,
+    stock: int,
+    category: str,
+    text_specifications: List[Specification],
+    pdf_specifications: UploadFile,
+    image_urls: List[UploadFile]
+):
     product_dict = {
         "title": title,
         "description": description,
@@ -33,15 +37,28 @@ def create_product(title,
         "price": price,
         "stock": stock,
         "category": category,
-        "text_specifications": text_specifications,
+        "text_specifications": [spec.dict() for spec in text_specifications],
         "pdf_specifications": UploadPdfToCloud(pdf_specifications),
         "image_urls": UploadToCloudinary(image_urls)
     }
-    # Insert the product into the collection
     result = product_db.insert_one(product_dict)
-    # Fetch the created product with its ID
+
+    subscribers = subscribers_collection.find()
+    subject = f"New Product Added: {product_dict['title']}"
+    content = (
+        f"Check out our new product:\n\n{product_dict['title']}\n\n"
+        f"{product_dict['description']}\nPrice: N{product_dict['price']} https://alpharaphasolar.com/store"
+    )
+
+    # Make sure `subject` and `content` are strings before sending
+    if isinstance(subject, str) and isinstance(content, str):
+        for subscriber in subscribers:
+            if "email" in subscriber:
+                send_email_reminder(subscriber["email"], content, subject)
+
     created_product = product_db.find_one({"_id": result.inserted_id})
-    return Product(**created_product)  # Convert the fetched document to Product model
+    return Product(**created_product)
+
 
 def GetProductByID(id):
     get_product = product_db.find_one({"_id": ObjectId(id)})
@@ -54,13 +71,13 @@ def GetProductByID(id):
 
 
 def GetProductsByTitle(title: str):
-    # Use a case-insensitive regular expression to match titles containing the search string
+
     get_products = product_db.find({"title": {"$regex": title, "$options": "i"}})
 
     proArr = []
 
     for prods in get_products:
-        prods["_id"] = str(prods["_id"])  # Convert ObjectId to string
+        prods["_id"] = str(prods["_id"])
         proArr.append(Product(**prods))
 
     if not proArr:

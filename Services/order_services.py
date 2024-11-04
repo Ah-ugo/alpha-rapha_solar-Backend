@@ -24,7 +24,7 @@ def create_order(order_data: OrderCreate, username: dict):
 
     total_price = 0
     order_items = []
-    uid = str(user["_id"])  # Correctly extract user ID
+    uid = str(user["_id"])
 
     for item in order_data.items:
         # Validate product ID
@@ -77,10 +77,9 @@ def create_order(order_data: OrderCreate, username: dict):
         "created_at": datetime.utcnow().isoformat()  # Timestamp
     }
 
-    # Attempt to insert the order document
     try:
         result = order_db.insert_one(order)
-        order["_id"] = str(result.inserted_id)  # Include the new order ID
+        order["_id"] = str(result.inserted_id)
     except Exception as e:
         # Rollback stock updates if order creation fails
         for item in order_items:

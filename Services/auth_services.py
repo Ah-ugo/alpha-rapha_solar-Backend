@@ -22,7 +22,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # MongoDB Collections
-user_db = db.users  # Reference to the 'users' collection
+user_db = db.users
 
 # Exception to raise if credentials are invalid
 credentials_exception = HTTPException(
@@ -100,8 +100,8 @@ def register_user(username: str, password: str, full_name: str, email: str, role
 
     # Insert into the database and get the inserted ID
     result = user_db.insert_one(user_data)
-    user_data["_id"] = str(result.inserted_id)  # Convert ObjectId to string
-    user_data.pop("password")  # Remove password before returning
+    user_data["_id"] = str(result.inserted_id)
+    user_data.pop("password")
 
     return user_data
 
@@ -271,7 +271,7 @@ def recover_password(email: str):
     reset_token = create_password_reset_token(email)
 
     # Create the email message
-    message = f"Click on the link to reset your password: https://alpharaphasolar-nine.vercel.app/reset-password?token={reset_token}"
+    message = f"Click on the link to reset your password: https://alpharaphasolar-nine.com/reset-password?token={reset_token}"
 
     # Send the email
     send_email_reminder(email, message)
