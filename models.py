@@ -5,11 +5,14 @@ from datetime import datetime
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
+
 # Product Models
 
 class Specification(BaseModel):
     label: Optional[str]
     value: Optional[str]
+
+
 class ProductBase(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
@@ -80,6 +83,7 @@ class Review(ReviewCreate):
         populate_by_name = True
         json_encoders = {ObjectId: str}
 
+
 # class Review(ReviewCreate):
 #     user: Optional[str] = None
 #     product_id: Optional[str] = None
@@ -110,6 +114,7 @@ class OrderItem(BaseModel):
     price: Optional[float] = None
     subtotal: Optional[float] = None
 
+
 class OrderBase(BaseModel):
     items: List[OrderItem]
     total_price: Optional[float] = None
@@ -121,8 +126,10 @@ class OrderBase(BaseModel):
             ObjectId: str
         }
 
+
 class OrderCreate(OrderBase):
     pass
+
 
 class Order(OrderBase):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
@@ -138,3 +145,16 @@ class Order(OrderBase):
 
 class Subscriber(BaseModel):
     email: EmailStr
+
+
+class ProjectsBase(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+
+
+class ProjectsCreate(ProjectsBase):
+    images: List[str]
+
+
+class Project(ProjectsCreate):
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
