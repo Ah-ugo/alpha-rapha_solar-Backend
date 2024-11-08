@@ -6,7 +6,8 @@ from Services.order_services import (
     get_user_orders,
     get_all_orders,
     get_order_by_id,
-    update_order_status
+    update_order_status,
+    DeleteOrder
 )
 # from fastapi.security. import JWTBearer
 from Services.auth_services import get_current_user, verify_admin
@@ -24,9 +25,7 @@ async def create_new_order(
         current_user: dict = Depends(get_current_user)
 ):
     print(f"Current User: {current_user}")
-    """
-    Create a new order for the authenticated user
-    """
+
     return create_order(order_data, current_user)
 
 
@@ -48,9 +47,6 @@ async def get_order(
         order_id: str,
         current_user: dict = Depends(get_current_user)
 ):
-    """
-    Get a specific order by ID
-    """
     return get_order_by_id(order_id, current_user["username"])
 
 
@@ -60,7 +56,9 @@ async def update_status(
         status: str,
         current_user: dict = Depends(get_current_user)
 ):
-    """
-    Update the status of an order
-    """
     return update_order_status(order_id, status, current_user["username"])
+
+
+@router.delete("/{id}")
+async def delete_order(id: str, current_user: dict = Depends(verify_admin)):
+    return DeleteOrder(id)

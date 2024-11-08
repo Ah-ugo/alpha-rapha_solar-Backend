@@ -219,3 +219,12 @@ def update_order_status(order_id: str, status: str, username: str):
             status_code=500,
             detail=f"Error updating order status: {str(e)}"
         )
+
+# Handle Delete Order
+def DeleteOrder(id):
+    delQuery = order_db.delete_one({"_id": ObjectId(id)})
+
+    if delQuery:
+        return f"Order with id {id} deleted successfully"
+    else:
+        raise HTTPException(status_code=400, detail="Something went wrong")
