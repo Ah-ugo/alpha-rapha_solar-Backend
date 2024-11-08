@@ -56,6 +56,7 @@ async def update_status(
         status: str,
         current_user: dict = Depends(get_current_user)
 ):
+
     return update_order_status(order_id, status, current_user["username"])
 
 
