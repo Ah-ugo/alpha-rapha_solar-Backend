@@ -17,4 +17,3 @@ def send_email_reminder(email: str, message: str, subject: str):
         # server.ehlo()
         server.login("ahuekweprinceugo@gmail.com", os.getenv("GMAIL_PASS"))
         server.sendmail(msg["From"], [msg["To"]], msg.as_string())
-
